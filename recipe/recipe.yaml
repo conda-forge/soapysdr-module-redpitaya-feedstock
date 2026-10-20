@@ -1,0 +1,51 @@
+schema_version: 1
+
+context:
+  version: "0.1.2"
+
+package:
+  name: soapysdr-module-redpitaya
+  version: ${{ version }}
+
+source:
+  url: https://github.com/pothosware/SoapyRedPitaya/archive/soapy-redpitaya-${{ version }}.tar.gz
+  sha256: ccf2eef151652690fea6bd145af843332fa753a5aae9c7fa5147a5b60a72a33c
+
+build:
+  number: 1
+
+requirements:
+  build:
+    - ${{ compiler("cxx") }}
+    - ${{ stdlib("c") }}
+    - cmake
+    - ninja
+  host:
+    - soapysdr
+
+tests:
+  - package_contents:
+      strict: true
+      files:
+        - if: not win
+          then: lib/SoapySDR/modules${{ soapysdr }}/libRedPitaya.so
+          else: Library/lib/SoapySDR/modules${{ soapysdr }}/RedPitaya.dll
+  - script:
+      - SoapySDRUtil --info
+      - if: not win
+        then: SoapySDRUtil --info | grep RedPitaya
+        else: SoapySDRUtil --info | findstr /l RedPitaya
+
+about:
+  license: GPL-3.0-or-later
+  license_file: COPYING
+  summary: SoapySDR RedPitaya Support Module
+  description: >
+    The Soapy Red Pitaya project provides a plugin module to use the Red Pitaya device within the SoapySDR API and software that supports SoapySDR.
+  homepage: https://github.com/pothosware/SoapyRedPitaya/wiki
+  repository: https://github.com/pothosware/SoapyRedPitaya
+  documentation: https://github.com/pothosware/SoapyRedPitaya/wiki
+
+extra:
+  recipe-maintainers:
+    - ryanvolz
